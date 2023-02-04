@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfToolBoxMAUI", "PdfToolBoxMAUI\PdfToolBoxMAUI.csproj", "{EEEA7162-C24F-4DD2-9609-55C5488D724B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfToolBoxMAUI.Tests", "PdfToolBoxMAUI.Tests\PdfToolBoxMAUI.Tests.csproj", "{138BEA02-B878-4678-9E2F-A12EC05839E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEEA7162-C24F-4DD2-9609-55C5488D724B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEEA7162-C24F-4DD2-9609-55C5488D724B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEEA7162-C24F-4DD2-9609-55C5488D724B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EEEA7162-C24F-4DD2-9609-55C5488D724B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEEA7162-C24F-4DD2-9609-55C5488D724B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{138BEA02-B878-4678-9E2F-A12EC05839E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{138BEA02-B878-4678-9E2F-A12EC05839E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{138BEA02-B878-4678-9E2F-A12EC05839E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{138BEA02-B878-4678-9E2F-A12EC05839E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5427B13B-9A30-4465-B549-7568E16872B3}
+	EndGlobalSection
+EndGlobal

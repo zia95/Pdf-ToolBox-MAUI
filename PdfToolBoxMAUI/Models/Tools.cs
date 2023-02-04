@@ -1,0 +1,25 @@
+﻿using System;
+
+namespace PdfToolBoxMAUI.Models;
+
+public class Tools
+{
+    public enum Ids
+    {
+        Generated,
+        Split,
+        Merge,
+        RemovePage,
+        Lock,
+        Unlock,
+        Watermark,
+        Compress,
+        ImagesToPdf,
+        ViewInformation,
+        RotatePage,
+    }
+    public Ids Id { get; set; }
+    //public Xamarin.Forms.ImageSource Image { get; set; }
+    public string Text { get; set; }
+    public string Description { get; set; }
+}

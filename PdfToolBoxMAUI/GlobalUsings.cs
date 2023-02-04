@@ -1,0 +1,15 @@
+﻿global using Plugin.Maui.Audio;
+global using PdfToolBoxMAUI.Models;
+global using PdfToolBoxMAUI.Services;
+global using CommunityToolkit.Maui;
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using PdfToolBoxMAUI.ViewModels;
+global using PdfToolBoxMAUI.Views;
+global using System.Collections.ObjectModel;
+global using System.ComponentModel;
+global using System.Diagnostics;
+global using System.Globalization;
+global using System.Runtime.CompilerServices;
+global using System.Text.Json;
+global using System.Threading.Tasks;

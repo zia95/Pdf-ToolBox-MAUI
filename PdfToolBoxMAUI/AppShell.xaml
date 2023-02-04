@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+	x:Class="PdfToolBoxMAUI.AppShell"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:views="clr-namespace:PdfToolBoxMAUI.Views"
+	xmlns:local="clr-namespace:PdfToolBoxMAUI">
+
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="Sample"
+		Icon="iconsample.png"
+		ContentTemplate="{DataTemplate views:SamplePage}"
+		Route="SamplePage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="Main"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:MainPage}"
+		Route="MainPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="WebView"
+		Icon="iconwebview.png"
+		ContentTemplate="{DataTemplate views:WebViewPage}"
+		Route="WebViewPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="PdfList"
+		Icon="iconlistdetail.png"
+		ContentTemplate="{DataTemplate views:PdfListPage}"
+		Route="PdfListPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="SplitPdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:SplitPdfPage}"
+		Route="SplitPdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="MergePdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:MergePdfPage}"
+		Route="MergePdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="ProtectPdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:ProtectPdfPage}"
+		Route="ProtectPdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="WatermarkPdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:WatermarkPdfPage}"
+		Route="WatermarkPdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="CompressPdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:CompressPdfPage}"
+		Route="CompressPdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="ToImagePdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:ToImagePdfPage}"
+		Route="ToImagePdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="EditPagePdf"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:EditPagePdfPage}"
+		Route="EditPagePdfPage" />
+	<ShellContent
+		Shell.NavBarIsVisible="true"
+		Title="About"
+		Icon="iconblank.png"
+		ContentTemplate="{DataTemplate views:AboutPage}"
+		Route="AboutPage" />
+</Shell>
