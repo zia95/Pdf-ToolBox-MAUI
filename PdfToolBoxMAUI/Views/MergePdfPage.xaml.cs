@@ -7,4 +7,5 @@ public partial class MergePdfPage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+
 }

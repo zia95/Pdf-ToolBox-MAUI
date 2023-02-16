@@ -2,7 +2,63 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:vm="clr-namespace:PdfToolBoxMAUI.ViewModels"
+			 xmlns:controls="clr-namespace:PdfToolBoxMAUI.Views.Controls"
+			 xmlns:models="clr-namespace:PdfToolBoxMAUI.Models"
 			 x:Class="PdfToolBoxMAUI.Views.MergePdfPage"
 			 x:DataType="vm:MergePdfViewModel">
 
+    <Grid RowSpacing="5" ColumnSpacing="10" ColumnDefinitions="*,*" RowDefinitions="Auto, *">
+
+        <Button Grid.Column="0" Margin="10"  Text="Add Document" Command="{Binding AddDocumentCommand}"/>
+        <Button Grid.Column="1" Margin="10"  Text="Clear Documents" Command="{Binding AddDocumentCommand}"/>
+
+
+        <CollectionView Grid.Row="1" Grid.ColumnSpan="2"  Margin="10" ItemsSource="{Binding Items}" CanReorderItems="True" >
+            <!--
+        <CollectionView.EmptyView>
+            <StackLayout BackgroundColor="Blue" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                <Label  Text="Add Documents to Merge" FontAttributes="Bold" />
+            </StackLayout>
+
+        </CollectionView.EmptyView>
+
+
+        <CollectionView.Header>
+            <Label Text="{Binding Items.Count}" HorizontalOptions="Center" />
+        </CollectionView.Header>
+-->
+
+
+
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="5" Orientation="Vertical"/>
+            </CollectionView.ItemsLayout>
+
+
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:PdfFile">
+                    <Frame>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MergePdfViewModel}}, Path=ListItemTappedCommand}" CommandParameter="{Binding}" />
+                        </Frame.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Image WidthRequest="96" HeightRequest="128" Source="{Binding Thumbnail}" />
+                            <VerticalStackLayout Grid.Column="1"
+										 HorizontalOptions="CenterAndExpand"
+										 VerticalOptions="CenterAndExpand">
+                                <Label Text="{Binding Description}"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </Grid>
+    
+	
 </ContentPage>

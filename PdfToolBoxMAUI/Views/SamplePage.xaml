@@ -35,6 +35,8 @@
 				SemanticProperties.Hint="Counts the number of times you click"
 				Command="{Binding CounterClickedCommand}"
 				HorizontalOptions="Center" />
+            
+            
 
 		</VerticalStackLayout>
 	</ScrollView>

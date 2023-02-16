@@ -2,7 +2,49 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:vm="clr-namespace:PdfToolBoxMAUI.ViewModels"
+			 xmlns:controls="clr-namespace:PdfToolBoxMAUI.Views.Controls"
 			 x:Class="PdfToolBoxMAUI.Views.MainPage"
 			 x:DataType="vm:MainViewModel">
+
+    <!--
+    <Grid RowDefinitions="auto, *, *">
+        
+        <VerticalStackLayout Grid.Row="0" Background="lightblue" Spacing="10" Padding="10">
+
+                <controls:FilePickerView x:Name="fpv" DialogFileTypeFilter="Pdf" DialogTitle="Pick any File" DisplayType="FullPath" Result="{Binding FileResult}" Command="{Binding FileResultCommand}" />
+
+                <Label x:Name="lblstatus" Text="this is item 0" />
+
+                <Label Background="lightyellow" FontSize="Large"  Text="this is item 0">
+                    <Label.GestureRecognizers>
+                        <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
+
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <Label IsVisible="False"  Background="lightyellow" FontSize="Large" Text="this is item 1">
+
+                    <Label.GestureRecognizers>
+                        <DragGestureRecognizer  DragStarting="DragGestureRecognizer_DragStarting" />
+                    </Label.GestureRecognizers>
+
+                </Label>
+                <Label Background="lightgreen" FontSize="Large" Text="place holder for dropping">
+
+                    <Label.GestureRecognizers>
+                        <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" DragOver="DropGestureRecognizer_DragOver" DragLeave="DropGestureRecognizer_DragLeave" />
+                    </Label.GestureRecognizers>
+
+                </Label>
+        </VerticalStackLayout>
+
+        
+        <controls:PdfCollectionView  Grid.Row="1"/>
+
+
+        <Editor x:Name="log" Grid.Row="2" IsReadOnly="True" Background="Brown"/>
+	</Grid>
+-->
+    <controls:PdfCollectionView />
 
 </ContentPage>

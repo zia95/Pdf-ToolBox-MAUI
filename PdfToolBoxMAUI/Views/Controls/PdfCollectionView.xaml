@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:PdfToolBoxMAUI.Models"
+             xmlns:controls="clr-namespace:PdfToolBoxMAUI.Views.Controls"
+             x:Class="PdfToolBoxMAUI.Views.Controls.PdfCollectionView" x:Name="cv">
+
+    <Grid RowDefinitions="Auto, *">
+        <Button Text="Load Items" Clicked="Button_Clicked" />
+        <ScrollView Grid.Row="1" Orientation="Vertical">
+            <FlexLayout x:Name="flx" BindableLayout.ItemsSource="{Binding Source={x:Reference cv}, Path=Items}" Wrap="Wrap" JustifyContent="Center" AlignItems="Start" AlignContent="Start">
+
+                <BindableLayout.ItemTemplate>
+
+                    <DataTemplate x:DataType="controls:PdfItemUI">
+                        
+                        <Grid Padding="0,20,10,20" RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, Auto, Auto">
+                            <BoxView IsVisible="{Binding BoxViewVisibleLeft}" HorizontalOptions="End" WidthRequest="10" Grid.Column="0" Grid.RowSpan="2" Color="{Binding DropRightUIColor}">
+                                <BoxView.GestureRecognizers>
+                                    <DropGestureRecognizer DropCommand="{Binding DroppedCommandLeft}"
+                                                   DropCommandParameter="{Binding}"/>
+                                                           <!--
+                                                   DragOverCommand="{Binding DraggedOverCommandLeft}"
+                                                   DragOverCommandParameter="{Binding}"
+                                                   DragLeaveCommand="{Binding DragLeaveCommandLeft}"
+                                                   DragLeaveCommandParameter="{Binding}"/>
+                                        -->
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                            <Image Grid.Column="1" WidthRequest="96" HeightRequest="128" BackgroundColor="Red" Source="dotnet_bot.png">
+                                <Image.GestureRecognizers>
+                                    <DragGestureRecognizer DragStartingCommand="{Binding DraggedCommand}"
+                                                   DragStartingCommandParameter="{Binding}" 
+                                                   DropCompletedCommand="{Binding DragCompletedCommand}"
+                                                   DropCompletedCommandParameter="{Binding}"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Grid.Column="1" Grid.Row="1" WidthRequest="96" BackgroundColor="Green" Text="{Binding Data.Name}" 
+                           HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+
+                            <BoxView Margin="10, 0, 0, 0" IsVisible="{Binding BoxViewVisibleRight}" HorizontalOptions="Start" WidthRequest="10" Grid.Column="2" Grid.RowSpan="2" Color="{Binding DropRightUIColor}">
+                                <BoxView.GestureRecognizers>
+                                    <DropGestureRecognizer DropCommand="{Binding DroppedCommandRight}"
+                                                   DropCommandParameter="{Binding}"/>
+                                                           <!--
+                                                   DragOverCommand="{Binding DraggedOverCommandRight}"
+                                                   DragOverCommandParameter="{Binding}"
+                                                   DragLeaveCommand="{Binding DragLeaveCommandRight}"
+                                                   DragLeaveCommandParameter="{Binding}"/>
+                                        -->
+                                </BoxView.GestureRecognizers>
+                            </BoxView>
+                            
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+
+            </FlexLayout>
+        </ScrollView>
+    </Grid>
+    
+    
+
+
+</ContentView>

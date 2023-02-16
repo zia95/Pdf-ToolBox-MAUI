@@ -6,7 +6,10 @@
 			 x:Class="PdfToolBoxMAUI.Views.PdfListPage"
 			 x:DataType="vm:PdfListViewModel">
 	<RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshingCommand}">
-		<CollectionView ItemsSource="{Binding Items}" RemainingItemsThreshold="10" RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+		<CollectionView ItemsSource="{Binding Items}" CanReorderItems="True" RemainingItemsThreshold="10" RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+			<CollectionView.ItemsLayout>
+				<GridItemsLayout Span="2" Orientation="Vertical"/>
+			</CollectionView.ItemsLayout>
 			<CollectionView.ItemTemplate>
 				<DataTemplate x:DataType="m:SampleItem">
 					<Frame Margin="4" Padding="12">
