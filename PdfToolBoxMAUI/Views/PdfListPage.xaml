@@ -6,17 +6,21 @@
 			 x:Class="PdfToolBoxMAUI.Views.PdfListPage"
 			 x:DataType="vm:PdfListViewModel">
 	<RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshingCommand}">
-		<CollectionView ItemsSource="{Binding Items}" CanReorderItems="True" RemainingItemsThreshold="10" RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
-			<CollectionView.ItemsLayout>
-				<GridItemsLayout Span="2" Orientation="Vertical"/>
-			</CollectionView.ItemsLayout>
+		<CollectionView ItemsSource="{Binding Items}" IsGrouped="True">
+
+			<CollectionView.GroupHeaderTemplate>
+				<DataTemplate x:DataType="m:PdfFileGroupList">
+					<Label Text="{Binding Name}" />
+				</DataTemplate>
+			</CollectionView.GroupHeaderTemplate>
+			
 			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="m:SampleItem">
+				<DataTemplate x:DataType="m:PdfFile">
 					<Frame Margin="4" Padding="12">
 						<Frame.GestureRecognizers>
 							<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PdfListViewModel}}, Path=GoToDetailsCommand}" CommandParameter="{Binding .}" />
 						</Frame.GestureRecognizers>
-						<Label Text="{Binding Title}" FontSize="Large" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}" />
+						<Label Text="{Binding FileName}" FontSize="Large" />
 					</Frame>
 				</DataTemplate>
 			</CollectionView.ItemTemplate>

@@ -1,4 +1,6 @@
-﻿using Syncfusion.Pdf;
+﻿using CommunityToolkit.Maui.Views;
+using Syncfusion.Maui.PdfViewer;
+using Syncfusion.Pdf;
 using Syncfusion.Pdf.Parsing;
 using System.Collections;
 
@@ -14,24 +16,13 @@ public partial class MergePdfViewModel : BaseViewModel
 
 
 	private FileHelperService _fhs;
-	private readonly string _img_dir = Path.Combine(FileSystem.Current.AppDataDirectory, "merge_thumbnails");
+	private PdfProcessingService _pps;
+	//private readonly string _img_dir = Path.Combine(FileSystem.Current.AppDataDirectory, "merge_thumbnails");
 
-	public MergePdfViewModel(FileHelperService fileHelperService)
+	public MergePdfViewModel(FileHelperService fileHelperService, PdfProcessingService pps)
 	{
 		_fhs = fileHelperService;
-
-		if (!Directory.Exists(_img_dir))
-		{
-			Directory.CreateDirectory(_img_dir);
-		}
-		else
-		{
-			//delete img cache
-			foreach(var f in Directory.EnumerateFiles(_img_dir))
-			{
-				File.Delete(f);
-			}
-		}
+		_pps = pps;
 	}
 
 
@@ -52,6 +43,15 @@ public partial class MergePdfViewModel : BaseViewModel
 			}
 		}
 	}
+	[RelayCommand]
+	public async void MergeDocument()
+	{
+		await Shell.Current.GoToAsync(nameof(PdfWorkerPage), true, new Dictionary<string, object>
+		{
+			{ "files", Items.ToArray() },
+			{ "workid", PdfWorkerViewModel.WorkIdMerge }
+		});
+	}
 
 
 
@@ -70,59 +70,17 @@ public partial class MergePdfViewModel : BaseViewModel
 
 	private async Task read_and_add_doc_async(FileResult file)
 	{
-		using Stream fs = await file.OpenReadAsync();
+		var pdf = await _pps.ReadPdfFromResultAsync(file, async () => await Application.Current.MainPage.DisplayPromptAsync("Password", "Document is protected. Please enter password.", placeholder: "Password"));
 
-		if (fs is null) return;
-
-		PdfFile pdfFile = new PdfFile();
-
-		pdfFile.Id = Guid.NewGuid().ToString();
-		pdfFile.File = file;
-		pdfFile.FilePath = file.FullPath;
-		pdfFile.FileName = file.FileName;
-		pdfFile.Thumbnail = "iconblank.png";
-
-		try
+		if(pdf is null)
 		{
-			using var pdf_doc = new PdfLoadedDocument(fs);
+			await Application.Current.MainPage.DisplayAlert("Error while reading document", $"Failed to read. Make sure the specified file is valid. \nSource: {file.FullPath}", "OK");
 
-			
-			var title = pdf_doc.DocumentInformation.Title;
-
-			pdfFile.Description = string.IsNullOrWhiteSpace(title) ? pdfFile.FileName : title;
-
-
-		}
-		catch (PdfException ex) 
-		{
-			await Application.Current.MainPage.DisplayAlert("Error while reading document", $"File: {file.FullPath}\nError: {ex.Message}" , "OK");
 			return;
 		}
-		
 
+		pdf.Description = pdf.FileName;
 
-
-		using Syncfusion.Maui.PdfToImageConverter.PdfToImageConverter pdftoimg = new(fs);
-
-		using Stream img_strm = await pdftoimg.ConvertAsync(0, new Size(96, 128));
-
-		
-
-
-
-		if (img_strm is not null)
-		{
-
-			string img_file = Path.Combine(_img_dir, pdfFile.Id);
-
-			using var img_fs = new FileStream(img_file, FileMode.Create);
-
-			img_strm.CopyTo(img_fs);
-			img_fs.Close();
-
-			pdfFile.Thumbnail = img_file;
-		}
-
-		Items.Add(pdfFile);
+		Items.Add(pdf);
 	}
 }

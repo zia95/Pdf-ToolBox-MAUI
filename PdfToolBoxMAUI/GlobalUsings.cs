@@ -6,6 +6,7 @@ global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using PdfToolBoxMAUI.ViewModels;
 global using PdfToolBoxMAUI.Views;
+global using PdfToolBoxMAUI.Views.Popups;
 global using System.Collections.ObjectModel;
 global using System.ComponentModel;
 global using System.Diagnostics;

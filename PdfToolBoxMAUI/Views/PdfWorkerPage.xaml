@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PdfToolBoxMAUI.ViewModels"
+             x:Class="PdfToolBoxMAUI.Views.PdfWorkerPage"
+             Title="PdfWorkerPage"
+             x:DataType="vm:PdfWorkerViewModel"
+             Shell.PresentationMode="ModalAnimated">
+    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+        
+
+        <ActivityIndicator Grid.Row="0" WidthRequest="128" HeightRequest="128" IsRunning="{Binding IsWorking}" />
+        <Label Text="{Binding ProgressText}" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+        
+        
+        <Entry IsVisible="{Binding DisplayOutputFileName}" Placeholder="Name" Text="{Binding OutputFileName}"/>
+
+        <Button IsVisible="{Binding DisplayMainButton}" Text="{Binding MainButtonText}" Command="{Binding MainButtonClickedCommand}" />
+    </VerticalStackLayout>
+</ContentPage>

@@ -6,5 +6,6 @@ public partial class AppShell : Shell
 	{
 		InitializeComponent();
 		Routing.RegisterRoute(nameof(PdfListDetailPage), typeof(PdfListDetailPage));
+		Routing.RegisterRoute(nameof(PdfWorkerPage), typeof(PdfWorkerPage));
 	}
 }

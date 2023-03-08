@@ -25,6 +25,14 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 		builder.Services.AddSingleton<FileHelperService>();
+		builder.Services.AddSingleton<PdfProcessingService>();
+		builder.Services.AddSingleton<ProcessedDocumentService>();
+
+
+		builder.Services.AddTransient<PdfWorkerViewModel>();
+		
+
+
 		builder.Services.AddSingleton<SampleViewModel>();
 
 		builder.Services.AddSingleton<SamplePage>();
@@ -35,10 +43,16 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<WebViewViewModel>();
 
+
+		builder.Services.AddTransient<PdfWorkerPage>();
+
+
 		builder.Services.AddSingleton<WebViewPage>();
 
-		builder.Services.AddTransient<SampleDataService>();
-		builder.Services.AddTransient<PdfListDetailViewModel>();
+		
+		builder.Services.AddSingleton<PdfListDetailViewModel>();
+
+
 		builder.Services.AddTransient<PdfListDetailPage>();
 
 		builder.Services.AddSingleton<PdfListViewModel>();

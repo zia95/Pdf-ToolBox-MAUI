@@ -1,4 +1,6 @@
-﻿namespace PdfToolBoxMAUI.Views;
+﻿using Syncfusion.Maui.PdfViewer;
+
+namespace PdfToolBoxMAUI.Views;
 
 public partial class EditPagePdfPage : ContentPage
 {
@@ -6,5 +8,6 @@ public partial class EditPagePdfPage : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = viewModel;
+
 	}
 }

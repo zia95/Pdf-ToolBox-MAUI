@@ -9,7 +9,7 @@
 	<ContentPage.Content>
 		<Grid RowDefinitions="Auto, *">
 			<Button Grid.Row="0" Text="Open PDF to display" Command="{Binding OpenPdfToDisplayCommand}"/>
-			<syncfusion:SfPdfViewer Grid.Row="1" x:Name="PdfViewer"
+			<syncfusion:SfPdfViewer Grid.Row="1" x:Name="PdfViewer"  ShowScrollHead="False"
 							   DocumentSource="{Binding PdfDocStream}" >
 			</syncfusion:SfPdfViewer>
 		</Grid>
