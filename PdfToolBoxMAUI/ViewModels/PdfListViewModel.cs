@@ -51,7 +51,7 @@ public partial class PdfListViewModel : BaseViewModel
 		{
 			foreach(var f in merge_docs)
 			{
-				var pdf = await _pps.ReadPdfFromFileAsync(f, null);
+				var pdf = _pps.ReadPdfFromFile(f, null);
 				if(pdf is not null)
 				{
 					group_merge.Add(pdf);

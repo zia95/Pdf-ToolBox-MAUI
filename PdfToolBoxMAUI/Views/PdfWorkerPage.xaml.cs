@@ -5,6 +5,9 @@ public partial class PdfWorkerPage : ContentPage
 	public PdfWorkerPage(PdfWorkerViewModel pwvm)
 	{
 		InitializeComponent();
-		this.BindingContext = pwvm;
-	}
+
+        pwvm.SetDispatcher(this.Dispatcher);
+        this.BindingContext = pwvm;
+        
+    }
 }

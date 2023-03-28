@@ -18,15 +18,17 @@ public partial class MergePdfViewModel : BaseViewModel
 	private FileHelperService _fhs;
 	private PdfProcessingService _pps;
 	//private readonly string _img_dir = Path.Combine(FileSystem.Current.AppDataDirectory, "merge_thumbnails");
-
+	IDispatcher _disp;
 	public MergePdfViewModel(FileHelperService fileHelperService, PdfProcessingService pps)
 	{
 		_fhs = fileHelperService;
 		_pps = pps;
 	}
 
-
-
+	public void SetDispatcher(IDispatcher dispatcher)
+	{
+		_disp = dispatcher;
+	}
 
 
 	[RelayCommand]
@@ -46,6 +48,11 @@ public partial class MergePdfViewModel : BaseViewModel
 	[RelayCommand]
 	public async void MergeDocument()
 	{
+		if(items.Count <= 1)
+		{
+			await Application.Current.MainPage.DisplayAlert("Detail", $"At minimum 2 documents can be merged. Add more documents and try again.", "OK");
+			return;
+		}
 		await Shell.Current.GoToAsync(nameof(PdfWorkerPage), true, new Dictionary<string, object>
 		{
 			{ "files", Items.ToArray() },
@@ -70,7 +77,13 @@ public partial class MergePdfViewModel : BaseViewModel
 
 	private async Task read_and_add_doc_async(FileResult file)
 	{
-		var pdf = await _pps.ReadPdfFromResultAsync(file, async () => await Application.Current.MainPage.DisplayPromptAsync("Password", "Document is protected. Please enter password.", placeholder: "Password"));
+		var pdf = _pps.ReadPdfFromResult(file, () =>
+		{
+			var t = Shell.Current.DisplayPromptAsync("Password", "Document is protected. Please enter password.", placeholder: "Password");
+			//t.Start();
+			//t.Wait();
+			return t.Result;
+		});
 
 		if(pdf is null)
 		{
@@ -81,6 +94,7 @@ public partial class MergePdfViewModel : BaseViewModel
 
 		pdf.Description = pdf.FileName;
 
-		Items.Add(pdf);
+		await _disp.DispatchAsync(() => Items.Add(pdf));
+		
 	}
 }

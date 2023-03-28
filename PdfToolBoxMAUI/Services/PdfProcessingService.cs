@@ -16,42 +16,50 @@ public class PdfProcessingService
 	private readonly string PdfThumbnailBaseDir = Path.Combine(FileSystem.Current.CacheDirectory, "pdf_thumbnails");
 
 
-	public async Task<PdfFile> ReadPdfFromResultAsync(FileResult file, Func<Task<string>> passwordRequest)
+	public PdfFile ReadPdfFromResult(FileResult file, Func<string> passwordRequest)
 	{
-		using var fs = await file.OpenReadAsync();
+		var fs = file.OpenReadAsync();
+		fs.Wait();
 
-		var d = await ReadPdfFromStreamAsync(fs, file.FileName, file.FullPath, passwordRequest);
-		d.FileResult = file;
+		var d = ReadPdfFromStream(fs.Result, file.FileName, file.FullPath, passwordRequest);
+		if(d != null)
+		{
+            d.FileResult = file;
+        }
+		
+		fs.Dispose();
 		return d;
 	}
-	public async Task<PdfFile> ReadPdfFromFileAsync(string fullpath, Func<Task<string>> passwordRequest)
+	public PdfFile ReadPdfFromFile(string fullpath, Func<string> passwordRequest)
 	{
 		using var fs = File.OpenRead(fullpath);
 
-		var d = await ReadPdfFromStreamAsync(fs, Path.GetFileName(fullpath), fullpath, passwordRequest);
+		var d = ReadPdfFromStream(fs, Path.GetFileName(fullpath), fullpath, passwordRequest);
 
 		return d;
 	}
 	
-	private async Task<PdfLoadedDocument> open_doc(PdfFile pdf)
+	private PdfLoadedDocument open_doc(PdfFile pdf)
 	{
-		
 		if (pdf.FileResult is not null)
 		{
-			var res = await open_doc(await pdf.FileResult.OpenReadAsync(), pdf.Password);
+			var strm = pdf.FileResult.OpenReadAsync();
+			strm.Wait();
+
+			var res = open_doc(strm.Result, pdf.Password);
 			return res.doc;
 		}
 		else
 		{
 			if (File.Exists(pdf.FilePath))
 			{
-				var res = await open_doc(File.OpenRead(pdf.FilePath), pdf.Password);
+				var res = open_doc(File.OpenRead(pdf.FilePath), pdf.Password);
 				return res.doc;
 			}
 		}
 		return null;
 	}
-	private async Task<(PdfLoadedDocument doc, string password)> open_doc(Stream fs, string password = null, Func<Task<string>> passwordRequest = null)
+	private (PdfLoadedDocument doc, string password) open_doc(Stream fs, string password = null, Func<string> passwordRequest = null)
 	{
 		try
 		{
@@ -76,7 +84,7 @@ public class PdfProcessingService
 			{
 				if (passwordRequest != null)
 				{
-					return await open_doc(fs, await passwordRequest(), passwordRequest);
+					return open_doc(fs, passwordRequest(), passwordRequest);
 				}
 			}
 			return (null, null);
@@ -148,7 +156,7 @@ public class PdfProcessingService
 		return null;
 	}
 
-	public async Task<PdfFile> ReadPdfFromStreamAsync(Stream fs, string filename, string filepath, Func<Task<string>> passwordRequest)
+	public PdfFile ReadPdfFromStream(Stream fs, string filename, string filepath, Func<string> passwordRequest)
 	{
 		PdfFile pdfFile = new PdfFile();
 
@@ -159,7 +167,7 @@ public class PdfProcessingService
 		
 
 
-		var pdf_doc = await open_doc(fs, passwordRequest: passwordRequest);
+		var pdf_doc = open_doc(fs, passwordRequest: passwordRequest);
 		if (pdf_doc.doc is null)
 		{
 			return null;
@@ -180,7 +188,15 @@ public class PdfProcessingService
 		return pdfFile;
 	}
 
+	public enum ProgressState
+	{
+		Merging,
+		Opening,
+		OpeningFailed,
+		Closing,
 
+		Done,
+	}
 
 	public struct ProgressTracker
 	{
@@ -191,18 +207,17 @@ public class PdfProcessingService
 
 		public int CurrentFileTotalPages;
 		public int CurrentFileTotalProcessedPages;
-		public int CurrentFileProgressPercentage;
+		public float CurrentFileProgressPercentage;
 
-		
+		public ProgressState State;
 
 		public List<PdfFile> ErrorFiles;
 
-		public bool Done;
 	}
 
 
 
-	public async Task MergePdfFilesAsync(string outfile, PdfFile[] files, Action<ProgressTracker> tracker)
+	public ProgressTracker MergePdfFiles(string outfile, PdfFile[] files, IProgress<ProgressTracker> tracker)
 	{
 		//Create a new document.
 		using PdfDocument document = new PdfDocument();
@@ -211,23 +226,26 @@ public class PdfProcessingService
 		var e = new ProgressTracker();
 		e.OutputFile = outfile;
 		e.Files = files;
-		e.Done = false;
 
 		for(int i = 0; i <  files.Length; i++)
 		{
 			e.CurrentFileIndex = i;
-			//Load the PDF document.
-			PdfLoadedDocument doc = await open_doc(files[i]);
-
 			e.CurrentFileTotalPages = 0;
 			e.CurrentFileTotalProcessedPages = 0;
-			e.CurrentFileProgressPercentage = 0;
+			e.CurrentFileProgressPercentage = -1;
+			//Load the PDF document.
+			e.State = ProgressState.Opening;
+			tracker?.Report(e);
+			PdfLoadedDocument doc = open_doc(files[i]);
+
+			
 
 			if (doc is null)
 			{
 				e.ErrorFiles ??= new List<PdfFile>();
 				e.ErrorFiles.Add(files[i]);
-				tracker?.Invoke(e);
+				e.State = ProgressState.OpeningFailed;
+				tracker?.Report(e);
 				continue;
 			}
 
@@ -243,11 +261,21 @@ public class PdfProcessingService
 
 				e.CurrentFileTotalProcessedPages++;
 
-				e.CurrentFileProgressPercentage = (e.CurrentFileTotalProcessedPages / e.CurrentFileTotalPages) * 100;
+				float progress = ((float)e.CurrentFileTotalProcessedPages / (float)e.CurrentFileTotalPages) * 100.0f;
+				
+				if(((int)progress) > e.CurrentFileProgressPercentage)
+				{
+					e.CurrentFileProgressPercentage = progress;
+					e.State = ProgressState.Merging;
+					tracker?.Report(e);
+				}
 
-				tracker?.Invoke(e);
+
+				
 			}
 
+			e.State = ProgressState.Closing;
+			tracker?.Report(e);
 
 			//Save the document and imported pages
 			document.Save(outstream);
@@ -261,8 +289,8 @@ public class PdfProcessingService
 		//Close the document.
 		document.Close();
 
-
-		e.Done = true;
-		tracker?.Invoke(e);
+		e.State = ProgressState.Done;
+		tracker?.Report(e);
+		return e;
 	}
 }

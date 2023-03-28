@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Maui.Dispatching;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,16 +47,52 @@ public partial class PdfWorkerViewModel : BaseViewModel
 	bool _workdone = false;
 	bool _successful;
 
-	PdfProcessingService _pps;
-	ProcessedDocumentService _pds;
+	readonly PdfProcessingService _pps;
+	readonly ProcessedDocumentService _pds;
+
+
+	Progress<PdfProcessingService.ProgressTracker> _progress;
+
+	IDispatcher _disp;
+
+
+
 	public PdfWorkerViewModel(PdfProcessingService pps, ProcessedDocumentService pds)
 	{
 		_pps = pps;
 		_pds = pds;
+		
+
+		
 	}
 
+	public void SetDispatcher(IDispatcher dispatcher)
+	{
+        _disp = dispatcher;
+		_progress = new Progress<PdfProcessingService.ProgressTracker>();
+        _progress.ProgressChanged += (s, e) =>
+        {
+			_disp.Dispatch(() => 
+			{ 
+				if(e.State == PdfProcessingService.ProgressState.Merging)
+				{
+                    ProgressText = $"Source: {e.Files[e.CurrentFileIndex].FileName.Truncate(50)} ({e.CurrentFileIndex + 1}/{e.Files.Length}), Progress: {e.CurrentFileProgressPercentage.ToString("0.00")}%";
+                }
+				else if(e.State == PdfProcessingService.ProgressState.Closing)
+				{
+                    ProgressText = $"Source: {e.Files[e.CurrentFileIndex].FileName.Truncate(50)} ({e.CurrentFileIndex + 1}/{e.Files.Length}), Closing...";
 
-	[RelayCommand]
+                }
+                else if (e.State == PdfProcessingService.ProgressState.Opening)
+                {
+                    ProgressText = $"Source: {e.Files[e.CurrentFileIndex].FileName.Truncate(50)} ({e.CurrentFileIndex + 1}/{e.Files.Length}), Opening...";
+                }
+            });
+            
+        };
+    }
+
+    [RelayCommand]
 	public async Task MainButtonClicked()
 	{
 		string outfile = get_out_file();
@@ -71,7 +108,8 @@ public partial class PdfWorkerViewModel : BaseViewModel
 			{
 				//go back to previous page
 			}
-			await Shell.Current.GoToAsync("..");
+			Shell.Current.GoToAsync("..");
+			return;
 		}
 
 		if(outfile is null)
@@ -85,9 +123,9 @@ public partial class PdfWorkerViewModel : BaseViewModel
 		DisplayMainButton = false;
 		IsWorking = true;
 
-		_successful = await do_work(outfile);
+        _successful = await Task.Run<bool>(() => do_work(outfile));
 
-		MainButtonText = _successful ? "Go to Merged File" : "Go Back";
+        MainButtonText = _successful ? "Go to Merged File" : "Go Back";
 
 		
 		_workdone = true;
@@ -118,24 +156,19 @@ public partial class PdfWorkerViewModel : BaseViewModel
 		return OutputFileName + ".pdf";
 	}
 
-	async Task<bool> do_work(string outfile)
+	bool do_work(string outfile)
 	{
 
 		if(WorkId == WorkIdMerge)
 		{
-			PdfProcessingService.ProgressTracker? tracker = null;
-			await _pps.MergePdfFilesAsync(outfile, Files, t => 
-			{ 
-				tracker = t;
-				ProgressText = $"Source: {t.Files[t.CurrentFileIndex].FileName.Truncate(10)} ({t.CurrentFileIndex + 1}/{t.Files.Length}), Progress: {t.CurrentFileProgressPercentage}";
-			});
+			var tracker = _pps.MergePdfFiles(outfile, Files, _progress);
 
 			if(File.Exists(outfile))
 			{
 				string message = "Merge process was successfully.";
-				if (tracker.Value.ErrorFiles?.Count > 0)
+				if (tracker.ErrorFiles?.Count > 0)
 				{
-					message += " But there were error in " + tracker.Value.ErrorFiles.Count + " file(s).";
+					message += " But there were error in " + tracker.ErrorFiles.Count + " file(s).";
 				}
 				ProgressText = message;
 
